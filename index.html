@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Correo – O4IT Ofertas</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #151820;
+    --border: #252a36;
+    --accent: #00c2ff;
+    --accent2: #ff6b35;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --success: #22c55e;
+    --input-bg: #1a1e2b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .header .badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border: 1px solid var(--accent);
+    display: inline-block;
+    padding: 4px 12px;
+    margin-bottom: 12px;
+  }
+
+  .header h1 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: #fff;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 6px;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .panel.full { grid-column: 1 / -1; }
+
+  .panel-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-title::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 5px;
+    margin-top: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  label:first-of-type { margin-top: 0; }
+
+  input, textarea {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    padding: 9px 12px;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  input:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 72px;
+  }
+
+  .cc-list {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    background: #0d0f14;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+    line-height: 1.7;
+  }
+
+  .cc-list span { color: var(--accent); }
+
+  .btn-generate {
+    grid-column: 1 / -1;
+    background: var(--accent);
+    color: #000;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 6px;
+    padding: 14px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+  }
+
+  .btn-generate:hover {
+    background: #33ccff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0,194,255,0.25);
+  }
+
+  .btn-generate:active { transform: translateY(0); }
+
+  /* OUTPUT */
+  .output-section {
+    max-width: 860px;
+    margin: 20px auto 0;
+    display: none;
+  }
+
+  .output-section.visible { display: block; }
+
+  .output-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .output-block-header {
+    background: #1a1e2b;
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .output-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .copy-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .copy-btn.copied { border-color: var(--success); color: var(--success); }
+
+  .output-content {
+    padding: 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: #c8cdd8;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .output-content .highlight { color: var(--accent); font-weight: 600; }
+  .output-content .highlight2 { color: var(--accent2); }
+
+  .btn-copy-all {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--accent2);
+    color: var(--accent2);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 4px;
+  }
+
+  .btn-copy-all:hover {
+    background: var(--accent2);
+    color: #000;
+  }
+
+  .btn-reset {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+
+  .btn-reset:hover { border-color: var(--muted); color: var(--text); }
+
+  @media (max-width: 600px) {
+    .container { grid-template-columns: 1fr; }
+    .btn-generate { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge">O4IT · Preventa</div>
+  <h1>Generador de Correo de Oferta</h1>
+  <p>Completa los campos y obtén asunto + cuerpo listos para copiar</p>
+</div>
+
+<div class="container">
+
+  <!-- SAM / Comercial -->
+  <div class="panel">
+    <div class="panel-title">Comercial (SAM)</div>
+    <label>Nombre del SAM / Comercial</label>
+    <input type="text" id="samNombre" placeholder="Ej: Tatiana Blandón" />
+    <label>Correo del SAM</label>
+    <input type="email" id="samCorreo" placeholder="tblandon@o4it.com" />
+  </div>
+
+  <!-- CC fijos -->
+  <div class="panel">
+    <div class="panel-title">CC (siempre fijos)</div>
+    <div class="cc-list">
+      <span>Luz Alejandra Alferez</span> &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a9c5c8c5cfccdbccd3e9c69dc0dd87cac6c4">[email&#160;protected]</a>&gt;<br>
+      <span>Luis Umbarila</span> &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="19756c747b786b70757859762d706d377a7674">[email&#160;protected]</a>&gt;<br>
+      <span>Diana Romero</span> &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="076375686a6275684768336e732964686a">[email&#160;protected]</a>&gt;
+    </div>
+  </div>
+
+  <!-- Datos OPP -->
+  <div class="panel">
+    <div class="panel-title">Oportunidad (OPP)</div>
+    <label># OPP</label>
+    <input type="text" id="oppNum" placeholder="Ej: OPP26000154" />
+    <label>Nombre / Título OPP</label>
+    <input type="text" id="oppNombre" placeholder="Ej: AV_v1" />
+    <label>Cliente</label>
+    <input type="text" id="cliente" placeholder="Ej: ITOS" />
+  </div>
+
+  <!-- Quote -->
+  <div class="panel">
+    <div class="panel-title">Quote</div>
+    <label># Quote (QTE)</label>
+    <input type="text" id="qteNum" placeholder="Ej: QTE26000109" />
+    <label>Notas adicionales <span style="color:var(--muted);font-weight:300">(opcional, una por línea)</span></label>
+    <textarea id="notasExtra" placeholder="Ej: Incluye descuento especial por volumen&#10;Vigencia de oferta: 15 días"></textarea>
+  </div>
+
+  <!-- Botón -->
+  <button class="btn-generate" onclick="generar()">⚡ Generar Correo</button>
+
+</div>
+
+<!-- OUTPUT -->
+<div class="output-section" id="outputSection">
+
+  <div class="output-block">
+    <div class="output-block-header">
+      <span class="output-label">Para</span>
+      <button class="copy-btn" onclick="copiar('outPara', this)">Copiar</button>
+    </div>
+    <div class="output-content" id="outPara"></div>
+  </div>
+
+  <div class="output-block">
+    <div class="output-block-header">
+      <span class="output-label">CC</span>
+      <button class="copy-btn" onclick="copiar('outCC', this)">Copiar</button>
+    </div>
+    <div class="output-content" id="outCC"></div>
+  </div>
+
+  <div class="output-block">
+    <div class="output-block-header">
+      <span class="output-label">Asunto</span>
+      <button class="copy-btn" onclick="copiar('outAsunto', this)">Copiar</button>
+    </div>
+    <div class="output-content" id="outAsunto"></div>
+  </div>
+
+  <div class="output-block">
+    <div class="output-block-header">
+      <span class="output-label">Cuerpo del correo</span>
+      <button class="copy-btn" onclick="copiar('outCuerpo', this)">Copiar</button>
+    </div>
+    <div class="output-content" id="outCuerpo"></div>
+  </div>
+
+  <button class="btn-copy-all" onclick="copiarTodo()">📋 Copiar todo (asunto + cuerpo)</button>
+  <button class="btn-reset" onclick="resetear()">↺ Nuevo correo</button>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  const CC_FIJOS = "Luz Alejandra Alferez Mendez <lalferez@o4it.com>; Luis Umbarila <lumbarila@o4it.com>; Diana Romero <dromero@o4it.com>";
+
+  const NOTA_FIJA = "2. Agradezco validar la totalidad de la oferta, los datos de cliente y datos de SAM. Con el fin de enviarla en PDF, a quien corresponda, después de su revisión.";
+
+  function generar() {
+    const samNombre = document.getElementById('samNombre').value.trim();
+    const samCorreo = document.getElementById('samCorreo').value.trim();
+    const oppNum    = document.getElementById('oppNum').value.trim();
+    const oppNombre = document.getElementById('oppNombre').value.trim();
+    const cliente   = document.getElementById('cliente').value.trim();
+    const qteNum    = document.getElementById('qteNum').value.trim();
+    const notasExtra = document.getElementById('notasExtra').value.trim();
+
+    // Validación básica
+    const requeridos = { 'Nombre SAM': samNombre, '# OPP': oppNum, 'Nombre OPP': oppNombre, 'Cliente': cliente, '# QTE': qteNum };
+    for (const [campo, val] of Object.entries(requeridos)) {
+      if (!val) { alert(`⚠️ Falta: ${campo}`); return; }
+    }
+
+    // PARA
+    const para = samCorreo ? `${samNombre} <${samCorreo}>` : samNombre;
+
+    // ASUNTO
+    const asunto = `${oppNum} ${oppNombre} - Cliente: ${cliente} – OFERTA`;
+
+    // NOTAS ADICIONALES (van antes de la nota fija)
+    const lineasExtra = notasExtra ? notasExtra.split('\n').filter(l => l.trim()) : [];
+    let notasBloque = '';
+    lineasExtra.forEach((l, i) => { notasBloque += `${i + 1}. ${l.trim()}\n`; });
+    const numNotaFija = lineasExtra.length + 1;
+
+    // CUERPO
+    const primerNombre = samNombre.split(' ')[0];
+    const cuerpo =
+`Buen día, ${primerNombre}
+
+Adjunto propuesta comercial, ${qteNum} verificado. ${asunto}
+
+
+Nota:
+${notasBloque}${numNotaFija}. Agradezco validar la totalidad de la oferta, los datos de cliente y datos de SAM. Con el fin de enviarla en PDF, a quien corresponda, después de su revisión.
+
+
+Quedo atento.`;
+
+    // Renderizar
+    document.getElementById('outPara').textContent = para;
+    document.getElementById('outCC').textContent = CC_FIJOS;
+    document.getElementById('outAsunto').textContent = asunto;
+    document.getElementById('outCuerpo').textContent = cuerpo;
+
+    document.getElementById('outputSection').classList.add('visible');
+    document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function copiar(id, btn) {
+    const text = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ Copiado';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  function copiarTodo() {
+    const asunto = document.getElementById('outAsunto').textContent;
+    const cuerpo = document.getElementById('outCuerpo').textContent;
+    const todo = `ASUNTO: ${asunto}\n\n${'─'.repeat(50)}\n\n${cuerpo}`;
+    navigator.clipboard.writeText(todo).then(() => {
+      const btn = document.querySelector('.btn-copy-all');
+      btn.textContent = '✓ Copiado al portapapeles';
+      setTimeout(() => { btn.textContent = '📋 Copiar todo (asunto + cuerpo)'; }, 2500);
+    });
+  }
+
+  function resetear() {
+    ['samNombre',
