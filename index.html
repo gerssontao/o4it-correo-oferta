@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0059)file:///D:/Documents/Downloads/generador-correo-oferta.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Generador de Correo - O4IT Ofertas</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="./index_files/css2" rel="stylesheet">
 <style>
   :root {
     --bg: #0d0f14; --surface: #151820; --border: #252a36;
@@ -49,7 +49,7 @@
 <body>
 
 <div class="header">
-  <div class="badge">O4IT &middot; Preventa</div>
+  <div class="badge">O4IT · Preventa</div>
   <h1>Generador de Correo de Oferta</h1>
   <p>Completa los campos y obtén asunto + cuerpo listos para copiar</p>
 </div>
@@ -59,7 +59,7 @@
   <div class="panel">
     <div class="panel-title">Comercial (SAM)</div>
     <label>Nombre del SAM / Comercial</label>
-    <input type="text" id="samNombre" placeholder="Ej: Tatiana Blandon" />
+    <input type="text" id="samNombre" placeholder="Ej: Tatiana Blandon">
   </div>
 
   <div class="panel">
@@ -74,33 +74,33 @@
   <div class="panel">
     <div class="panel-title">Oportunidad (OPP)</div>
     <label># OPP</label>
-    <input type="text" id="oppNum" placeholder="Ej: OPP26000154" />
+    <input type="text" id="oppNum" placeholder="Ej: OPP26000154">
     <label>Nombre / Titulo OPP</label>
-    <input type="text" id="oppNombre" placeholder="Ej: AV_v1" />
+    <input type="text" id="oppNombre" placeholder="Ej: AV_v1">
     <label>Cliente</label>
-    <input type="text" id="cliente" placeholder="Ej: ITOS" />
+    <input type="text" id="cliente" placeholder="Ej: ITOS">
   </div>
 
   <div class="panel">
     <div class="panel-title">Quote</div>
     <label># Quote (QTE)</label>
-    <input type="text" id="qteNum" placeholder="Ej: QTE26000109" />
+    <input type="text" id="qteNum" placeholder="Ej: QTE26000109">
     <label>Notas adicionales <span style="color:var(--muted);font-weight:300">(opcional, una por linea)</span></label>
     <textarea id="notasExtra" placeholder="Ej: Precios contemplan facturacion a traves de O4IT LLC"></textarea>
   </div>
 
-  <button class="btn-generate" id="btnGenerar">&#9889; Generar Correo</button>
+  <button class="btn-generate" id="btnGenerar">⚡ Generar Correo</button>
 
 </div>
 
-<div class="output-section" id="outputSection">
+<div class="output-section visible" id="outputSection">
 
   <div class="output-block">
     <div class="output-block-header">
       <span class="output-label">Asunto</span>
       <button class="copy-btn" data-target="outAsunto">Copiar</button>
     </div>
-    <div class="output-content" id="outAsunto"></div>
+    <div class="output-content" id="outAsunto">123233 cccc - Cliente: sgfsdgdg - OFERTA</div>
   </div>
 
   <div class="output-block">
@@ -108,7 +108,17 @@
       <span class="output-label">Cuerpo del correo</span>
       <button class="copy-btn" data-target="outCuerpo">Copiar</button>
     </div>
-    <div class="output-content" id="outCuerpo"></div>
+    <div class="output-content" id="outCuerpo">Buen día, Tatiana / Carolina
+
+Adjunto propuesta comercial, qq21213 verificado. 123233 cccc - Cliente: sgfsdgdg - OFERTA
+
+
+Nota:
+1. saf
+2. Agradezco validar la totalidad de la oferta, los datos de cliente y datos de SAM. Con el fin de enviarla en PDF, a quien corresponda, después de su revisión.
+
+
+Quedo atento.</div>
   </div>
 
   <button class="btn-copy-all" id="btnCopiarTodo">Copiar todo (asunto + cuerpo)</button>
@@ -139,12 +149,18 @@
     lineasExtra.forEach(function(l, i) { notasBloque += (i + 1) + '. ' + l.trim() + '\n'; });
     var numFija = lineasExtra.length + 1;
 
-    var primerNombre = samNombre.split(' ')[0];
-    var cuerpo = 'Buen dia, ' + primerNombre + '\n\n'
+    var saludo;
+    if (samNombre.includes('/')) {
+      var partes = samNombre.split('/').map(function(p) { return p.trim().split(' ')[0]; });
+      saludo = partes.join(' / ');
+    } else {
+      saludo = samNombre.split(' ')[0];
+    }
+    var cuerpo = 'Buen día, ' + saludo + '\n\n'
       + 'Adjunto propuesta comercial, ' + qteNum + ' verificado. ' + asunto + '\n\n\n'
       + 'Nota:\n'
       + notasBloque
-      + numFija + '. Agradezco validar la totalidad de la oferta, los datos de cliente y datos de SAM. Con el fin de enviarla en PDF, a quien corresponda, despues de su revision.\n\n\n'
+      + numFija + '. Agradezco validar la totalidad de la oferta, los datos de cliente y datos de SAM. Con el fin de enviarla en PDF, a quien corresponda, después de su revisión.\n\n\n'
       + 'Quedo atento.';
 
     document.getElementById('outAsunto').textContent = asunto;
@@ -199,5 +215,6 @@
 
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
